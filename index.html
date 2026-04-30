@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Splitdle</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+
+    <header>
+      <h1>Splitdle</h1>
+      <p>Race through -dle games. Lock your splits. Beat your friends.</p>
+      <button id="startBtn">Start Daily Run</button>
+    </header>
+
+    <section>
+      <h2>How It Works</h2>
+      <div class="steps">
+        <div class="step">
+          <h3>1. Start</h3>
+          <p>Click play and get dropped into a random -dle game.</p>
+        </div>
+        <div class="step">
+          <h3>2. Solve</h3>
+          <p>Beat each game as fast as you can. Your splits are tracked automatically.</p>
+        </div>
+        <div class="step">
+          <h3>3. Compete</h3>
+          <p>Share your result. Challenge friends. Climb the leaderboard.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Today's Leaderboard</h2>
+      <div class="leaderboard">
+        <div class="leaderboard-row header-row">
+          <span>#</span>
+          <span>Player</span>
+          <span>Streak</span>
+          <span>Time</span>
+        </div>
+        <div class="leaderboard-row">
+          <span>1</span>
+          <span>speedking99</span>
+          <span>🔥 12</span>
+          <span>4:32</span>
+        </div>
+        <div class="leaderboard-row">
+          <span>2</span>
+          <span>dlegendary</span>
+          <span>🔥 7</span>
+          <span>5:14</span>
+        </div>
+        <div class="leaderboard-row">
+          <span>3</span>
+          <span>flaglemaster</span>
+          <span>🔥 23</span>
+          <span>5:58</span>
+        </div>
+        <div class="leaderboard-row">
+          <span>4</span>
+          <span>wordwizard</span>
+          <span>🔥 4</span>
+          <span>6:21</span>
+        </div>
+        <div class="leaderboard-row">
+          <span>5</span>
+          <span>puzzlequeen</span>
+          <span>🔥 9</span>
+          <span>7:03</span>
+        </div>
+      </div>
+    </section>
+
+    <div id="modal" class="modal-overlay">
+      <div class="modal-box">
+        <h2>Extension Required</h2>
+        <p>To start a Splitdle run, you need the browser extension installed.</p>
+        <div class="modal-buttons">
+          <button id="installBtn">Install Extension</button>
+          <button id="closeBtn">Maybe Later</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

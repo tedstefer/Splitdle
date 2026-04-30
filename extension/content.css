@@ -1,0 +1,140 @@
+#splitdle-hud {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  width: 220px;
+  background-color: rgba(15, 15, 15, 0.92);
+  border: 1px solid #e94560;
+  border-radius: 12px;
+  padding: 14px;
+  z-index: 999999;
+  font-family: Arial, sans-serif;
+  color: #ffffff;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+
+#splitdle-logo {
+  color: #e94560;
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-align: center;
+  margin-bottom: 4px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #333;
+}
+
+#splitdle-stamp {
+  text-align: center;
+  font-size: 14px;
+  font-weight: bold;
+  color: #ffffff;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+
+#splitdle-timer {
+  font-size: 28px;
+  font-weight: bold;
+  color: #e94560;
+  text-align: center;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+#splitdle-game {
+  font-size: 11px;
+  color: #aaaaaa;
+  text-align: center;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #333;
+}
+
+#splitdle-splits {
+  font-size: 11px;
+  margin-bottom: 12px;
+}
+
+.splitdle-split-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  color: #aaaaaa;
+  border-bottom: 1px solid #1a1a2e;
+}
+
+#splitdle-stop-btn {
+  width: 100%;
+  padding: 8px;
+  background-color: #333;
+  color: #aaaaaa;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+#splitdle-stop-btn:hover {
+  background-color: #444;
+}
+
+/* Confirmation box */
+#splitdle-confirm {
+  margin-top: 10px;
+  background-color: #1a1a2e;
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+  border: 1px solid #e94560;
+}
+
+#splitdle-confirm p {
+  font-size: 12px;
+  color: #ffffff;
+  margin-bottom: 4px;
+}
+
+.splitdle-confirm-warning {
+  color: #e94560 !important;
+  font-size: 10px !important;
+  margin-bottom: 10px !important;
+}
+
+.splitdle-confirm-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.splitdle-confirm-buttons button {
+  width: 100%;
+  padding: 7px;
+  border: none;
+  border-radius: 6px;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+#splitdle-confirm-yes {
+  background-color: #e94560;
+  color: white;
+}
+
+#splitdle-confirm-yes:hover {
+  background-color: #c73652;
+}
+
+#splitdle-confirm-no {
+  background-color: #333;
+  color: #aaaaaa;
+}
+
+#splitdle-confirm-no:hover {
+  background-color: #444;
+}
+
+/* Hidden utility class */
+.splitdle-hidden {
+  display: none !important;
+}

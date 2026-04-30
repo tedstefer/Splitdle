@@ -1,0 +1,183 @@
+/* General reset so everything looks consistent across browsers */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #0f0f0f;
+  color: #ffffff;
+}
+
+/* Header / Hero section */
+header {
+  text-align: center;
+  padding: 80px 20px;
+  background-color: #1a1a2e;
+}
+
+header h1 {
+  font-size: 64px;
+  color: #e94560;
+  letter-spacing: 4px;
+}
+
+header p {
+  font-size: 20px;
+  margin-top: 16px;
+  color: #aaaaaa;
+}
+
+header button {
+  margin-top: 32px;
+  padding: 16px 40px;
+  font-size: 18px;
+  background-color: #e94560;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+header button:hover {
+  background-color: #c73652;
+}
+
+/* How It Works section */
+section {
+  padding: 60px 20px;
+  text-align: center;
+}
+
+section h2 {
+  font-size: 36px;
+  margin-bottom: 40px;
+  color: #e94560;
+}
+
+/* The three step cards laid out in a row */
+.steps {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.step {
+  background-color: #1a1a2e;
+  border-radius: 12px;
+  padding: 32px;
+  width: 260px;
+}
+
+.step h3 {
+  font-size: 22px;
+  margin-bottom: 12px;
+  color: #e94560;
+}
+
+.step p {
+  color: #aaaaaa;
+  line-height: 1.6;
+}
+
+/* Modal overlay — the dark background behind the popup */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* The white box in the middle */
+.modal-box {
+  background-color: #1a1a2e;
+  border-radius: 12px;
+  padding: 40px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  border: 1px solid #e94560;
+}
+
+.modal-box h2 {
+  color: #e94560;
+  margin-bottom: 16px;
+  font-size: 24px;
+}
+
+.modal-box p {
+  color: #aaaaaa;
+  margin-bottom: 32px;
+  line-height: 1.6;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.modal-buttons button {
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#installBtn {
+  background-color: #e94560;
+  color: white;
+}
+
+#installBtn:hover {
+  background-color: #c73652;
+}
+
+#closeBtn {
+  background-color: #333;
+  color: #aaaaaa;
+}
+
+#closeBtn:hover {
+  background-color: #444;
+}
+
+/* Leaderboard */
+.leaderboard {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.leaderboard-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  background-color: #1a1a2e;
+  color: #ffffff;
+}
+
+.header-row {
+  background-color: transparent;
+  color: #e94560;
+  font-weight: bold;
+  border-bottom: 1px solid #e94560;
+  border-radius: 0;
+  margin-bottom: 12px;
+}
+
+.leaderboard-row span {
+  width: 25%;
+  text-align: center;
+}
