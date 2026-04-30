@@ -151,3 +151,9 @@ section h2 {
 #closeBtn:hover {
   background-color: #444;
 }
+
+.compat-notice {
+  margin-top: 12px;
+  font-size: 12px;
+  color: #555555;
+}
