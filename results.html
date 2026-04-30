@@ -10,47 +10,6 @@
         padding: 0 20px;
         text-align: center;
       }
-      .results-card {
-        background-color: #1a1a2e;
-        border-radius: 12px;
-        padding: 32px;
-        margin-bottom: 24px;
-        border: 1px solid #333;
-      }
-      .results-date {
-        color: #aaaaaa;
-        font-size: 13px;
-        margin-bottom: 24px;
-      }
-      .results-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 0;
-        border-bottom: 1px solid #333;
-        font-size: 14px;
-        color: #ffffff;
-      }
-      .results-row:last-child {
-        border-bottom: none;
-      }
-      .results-final {
-        margin-top: 16px;
-        padding-top: 16px;
-        border-top: 1px solid #e94560;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 15px;
-        font-weight: bold;
-        color: #e94560;
-      }
-      .dnf-message {
-        font-size: 18px;
-        color: #e94560;
-        font-weight: bold;
-        padding: 16px 0;
-      }
       .copy-block {
         background-color: #0f0f0f;
         border: 1px solid #333;
@@ -101,8 +60,6 @@
       <h1 style="color:#e94560;letter-spacing:4px;margin-bottom:6px;">Splitdle</h1>
       <a href="#" class="support-link" style="margin-bottom:32px;display:block;">Support Us!</a>
 
-      <div class="results-card" id="resultsCard"></div>
-
       <div class="copy-block" id="copyBlock"></div>
       <button class="copy-btn" id="copyBtn">Copy Result</button>
 
@@ -125,7 +82,6 @@
         return url.searchParams.get(name);
       }
 
-      var card = document.getElementById('resultsCard');
       var copyBlock = document.getElementById('copyBlock');
       var copyBtn = document.getElementById('copyBtn');
 
@@ -135,17 +91,9 @@
 
       if (isDNF) {
         var failedGame = getParam('game') || 'Unknown';
-
-        card.innerHTML =
-          '<div class="results-date">' + date + '</div>' +
-          '<div class="dnf-message">DNF</div>' +
-          '<div style="color:#aaaaaa;font-size:14px;margin-top:8px;">Failed on: ' + failedGame + ' \uD83D\uDE2D</div>';
-
         shareText = 'SPLITDLE\uD83C\uDFAE ' + date + '\nDNF -> Failed on: ' + failedGame + ' \uD83D\uDE2D';
 
       } else {
-        var dateHeader = '<div class="results-date">' + date + '</div>';
-        var rowsHTML = '';
         var splitLines = '';
 
         for (var i = 1; i <= 4; i++) {
@@ -153,17 +101,12 @@
           var timeMs = getParam('g' + i + 'time');
           if (name && timeMs) {
             var formatted = formatTime(parseInt(timeMs));
-            rowsHTML += '<div class="results-row"><span>\u2705 ' + name + '</span><span>' + formatted + '</span></div>';
             splitLines += '\u2705 ' + name + ': ' + formatted + '\n';
           }
         }
 
         var totalMs = parseInt(getParam('total') || '0');
         var totalFormatted = formatTime(totalMs);
-
-        var finalRow = '<div class="results-final"><span>Final Time</span><span>' + totalFormatted + ' \u231B</span></div>';
-
-        card.innerHTML = dateHeader + rowsHTML + finalRow;
 
         shareText = 'SPLITDLE\uD83C\uDFAE ' + date + '\n' + splitLines + 'Final Time: ' + totalFormatted + '\u231B';
       }
