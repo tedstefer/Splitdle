@@ -237,7 +237,7 @@ function showPrePlayedDNF() {
           clearInterval(interval);
           var hudEl2 = document.getElementById('splitdle-hud');
           if (hudEl2) hudEl2.remove();
-          window.location.href = 'https://splitdle.com/results?' + params;
+          window.location.href = 'https://splitdle.com/results.html?' + params;
         }
       }, 1000);
     });
@@ -332,7 +332,7 @@ function handleWin() {
                 }, 0);
 
                 params += '&total=' + encodeURIComponent(totalMs);
-                window.location.href = 'https://splitdle.com/results?' + params;
+                window.location.href = 'https://splitdle.com/results.html?' + params;
               });
             }
           }, 1000);
