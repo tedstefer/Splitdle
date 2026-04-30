@@ -380,6 +380,52 @@ function showAlreadyPlayed() {
   }, 1000);
 }
 
+function showAlreadyPlayedDNF(gameName) {
+  var gameEl = document.getElementById('splitdle-game');
+  if (gameEl) {
+    gameEl.textContent = 'Already played today - DNF';
+    gameEl.style.color = '#e94560';
+  }
+
+  var stopBtn = document.getElementById('splitdle-stop-btn');
+  if (stopBtn) stopBtn.style.display = 'none';
+
+  var dnfMsg = document.createElement('div');
+  dnfMsg.style.cssText = 'font-size:11px;color:#e94560;text-align:center;margin-bottom:8px;line-height:1.6;padding:8px;background:#1a1a2e;border-radius:8px;';
+  dnfMsg.textContent = 'You have already completed your daily run today.';
+
+  var hud = document.getElementById('splitdle-hud');
+  if (hud && stopBtn) hud.insertBefore(dnfMsg, stopBtn);
+
+  chrome.runtime.sendMessage({ type: 'DNF_RUN' }, function() {
+    var date = new Date().toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+    var params = 'dnf=true&game=' + encodeURIComponent(gameName) + '&date=' + encodeURIComponent(date);
+
+    var countdown = 5;
+    var countEl = document.createElement('p');
+    countEl.style.cssText = 'font-size:11px;color:#aaaaaa;text-align:center;margin-top:8px;';
+    countEl.textContent = 'Closing in ' + countdown + '...';
+    var hudEl = document.getElementById('splitdle-hud');
+    if (hudEl) hudEl.appendChild(countEl);
+
+    var interval = setInterval(function() {
+      countdown--;
+      if (countdown > 0) {
+        countEl.textContent = 'Closing in ' + countdown + '...';
+      } else {
+        clearInterval(interval);
+        var hudEl2 = document.getElementById('splitdle-hud');
+        if (hudEl2) hudEl2.remove();
+        window.location.href = 'https://splitdle.com/results.html?' + params;
+      }
+    }, 1000);
+  });
+}
+
 chrome.runtime.sendMessage({ type: 'GET_STATE' }, function(response) {
   if (!response || !response.state) return;
   var state = response.state;
@@ -408,6 +454,19 @@ chrome.runtime.sendMessage({ type: 'GET_STATE' }, function(response) {
   }
   if (!isCorrectGame) return;
 
-  buildHUD();
-  startWinDetection();
+// For Hello Wordl specifically check if already played today
+  if (currentHostname === 'hellowordl.net') {
+    chrome.runtime.sendMessage({ type: 'CHECK_GAME_PLAYED', gameName: 'Hello Wordl' }, function(response) {
+      if (response && response.played) {
+        buildHUD();
+        showAlreadyPlayedDNF('Hello Wordl');
+      } else {
+        buildHUD();
+        startWinDetection();
+      }
+    });
+  } else {
+    buildHUD();
+    startWinDetection();
+  }
 });

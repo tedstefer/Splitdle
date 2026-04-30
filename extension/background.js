@@ -5,6 +5,10 @@ var todaysSeed = [
   { name: 'Flagle', url: 'https://www.flagle.io/', category: 'geography' },
 ];
 
+function getTodayKey() {
+  return 'played_' + new Date().toLocaleDateString();
+}
+
 var runState = {
   running: false,
   startTime: null,
@@ -64,6 +68,19 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     var elapsed = Date.now() - runState.startTime;
     runState.splits[runState.currentGameIndex] = elapsed;
 
+    // Record this game as completed today
+    var completedGameName = todaysSeed[runState.currentGameIndex].name;
+    var todayKey = getTodayKey();
+    chrome.storage.local.get(todayKey, function(result) {
+      var played = result[todayKey] || [];
+      if (played.indexOf(completedGameName) === -1) {
+        played.push(completedGameName);
+      }
+      var store = {};
+      store[todayKey] = played;
+      chrome.storage.local.set(store);
+    });
+
     if (runState.currentGameIndex < 3) {
       runState.currentGameIndex++;
       chrome.tabs.create({ url: todaysSeed[runState.currentGameIndex].url });
@@ -90,6 +107,15 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     runState.currentGameIndex = 0;
     runState.startedDate = new Date().toLocaleDateString();
     sendResponse({ success: true });
+  }
+
+if (message.type === 'CHECK_GAME_PLAYED') {
+    var todayKey = getTodayKey();
+    chrome.storage.local.get(todayKey, function(result) {
+      var played = result[todayKey] || [];
+      sendResponse({ played: played.indexOf(message.gameName) !== -1 });
+    });
+    return true;
   }
 
   return true;
