@@ -101,7 +101,7 @@ function buildHUD() {
   document.body.appendChild(hud);
 
   chrome.runtime.sendMessage({ type: 'GET_STATE' }, function(response) {
-    var games = ['Game 1', 'Game 2', 'Game 3', 'Game 4', 'Game 5'];
+    var games = ['Game 1', 'Game 2', 'Game 3', 'Game 4'];
     if (response && response.seed) {
       games = response.seed.map(function(g) { return g.name; });
     }
@@ -211,21 +211,36 @@ function showPrePlayedDNF() {
   if (hud && stopBtn) hud.insertBefore(dnfMsg, stopBtn);
 
   chrome.runtime.sendMessage({ type: 'DNF_RUN' }, function() {
-    var countdown = 5;
-    var countEl = document.createElement('p');
-    countEl.style.cssText = 'font-size:11px;color:#aaaaaa;text-align:center;margin-top:8px;';
-    countEl.textContent = 'Closing in ' + countdown + '...';
-    if (hud) hud.appendChild(countEl);
+    chrome.runtime.sendMessage({ type: 'GET_STATE' }, function(finalState) {
+      var seed = finalState ? finalState.seed : [];
+      var currentIndex = finalState ? finalState.state.currentGameIndex : 0;
+      var gameName = seed[currentIndex] ? seed[currentIndex].name : 'Unknown';
+      var date = new Date().toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
+      var params = 'dnf=true&game=' + encodeURIComponent(gameName) + '&date=' + encodeURIComponent(date);
 
-    var interval = setInterval(function() {
-      countdown--;
-      if (countdown > 0) {
-        countEl.textContent = 'Closing in ' + countdown + '...';
-      } else {
-        clearInterval(interval);
-        if (hud) hud.remove();
-      }
-    }, 1000);
+      var countdown = 5;
+      var countEl = document.createElement('p');
+      countEl.style.cssText = 'font-size:11px;color:#aaaaaa;text-align:center;margin-top:8px;';
+      countEl.textContent = 'Closing in ' + countdown + '...';
+      var hudEl = document.getElementById('splitdle-hud');
+      if (hudEl) hudEl.appendChild(countEl);
+
+      var interval = setInterval(function() {
+        countdown--;
+        if (countdown > 0) {
+          countEl.textContent = 'Closing in ' + countdown + '...';
+        } else {
+          clearInterval(interval);
+          var hudEl2 = document.getElementById('splitdle-hud');
+          if (hudEl2) hudEl2.remove();
+          window.location.href = 'https://splitdle.com/results?' + params;
+        }
+      }, 1000);
+    });
   });
 }
 
@@ -291,7 +306,34 @@ function handleWin() {
               clearInterval(countInterval);
               var hudEl = document.getElementById('splitdle-hud');
               if (hudEl) hudEl.remove();
-              window.location.href = 'https://splitdle.com/results';
+
+              chrome.runtime.sendMessage({ type: 'GET_STATE' }, function(finalState) {
+                if (!finalState) return;
+                var finalStateData = finalState.state;
+                var seed = finalState.seed;
+
+                var date = new Date().toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric'
+                });
+
+                var params = 'date=' + encodeURIComponent(date);
+
+                finalStateData.splits.forEach(function(split, index) {
+                  if (split !== null && seed[index]) {
+                    params += '&g' + (index + 1) + 'name=' + encodeURIComponent(seed[index].name);
+                    params += '&g' + (index + 1) + 'time=' + encodeURIComponent(split);
+                  }
+                });
+
+                var totalMs = finalStateData.splits.reduce(function(acc, split) {
+                  return acc + (split || 0);
+                }, 0);
+
+                params += '&total=' + encodeURIComponent(totalMs);
+                window.location.href = 'https://splitdle.com/results?' + params;
+              });
             }
           }, 1000);
         }
