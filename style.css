@@ -151,33 +151,3 @@ section h2 {
 #closeBtn:hover {
   background-color: #444;
 }
-
-/* Leaderboard */
-.leaderboard {
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.leaderboard-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 14px 20px;
-  border-radius: 8px;
-  margin-bottom: 8px;
-  background-color: #1a1a2e;
-  color: #ffffff;
-}
-
-.header-row {
-  background-color: transparent;
-  color: #e94560;
-  font-weight: bold;
-  border-bottom: 1px solid #e94560;
-  border-radius: 0;
-  margin-bottom: 12px;
-}
-
-.leaderboard-row span {
-  width: 25%;
-  text-align: center;
-}
