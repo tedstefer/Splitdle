@@ -157,3 +157,15 @@ section h2 {
   font-size: 12px;
   color: #ffffff;
 }
+
+.support-link-main {
+  display: inline-block;
+  margin-top: 16px;
+  color: #555555;
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.support-link-main:hover {
+  color: #aaaaaa;
+}
