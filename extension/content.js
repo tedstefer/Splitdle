@@ -101,7 +101,7 @@ function buildHUD() {
   document.body.appendChild(hud);
 
   chrome.runtime.sendMessage({ type: 'GET_STATE' }, function(response) {
-    var games = ['Game 1', 'Game 2', 'Game 3', 'Game 4'];
+    var games = ['Game 1', 'Game 2', 'Game 3'];
     if (response && response.seed) {
       games = response.seed.map(function(g) { return g.name; });
     }
@@ -163,7 +163,7 @@ function buildHUD() {
       var gameEl = document.getElementById('splitdle-game');
       if (gameEl) {
         if (state.running && seed && seed[state.currentGameIndex]) {
-          gameEl.textContent = 'Game ' + (state.currentGameIndex + 1) + ' of 4 - ' + seed[state.currentGameIndex].name;
+          gameEl.textContent = 'Game ' + (state.currentGameIndex + 1) + ' of 3 - ' + seed[state.currentGameIndex].name;
         } else if (!state.running) {
           gameEl.textContent = 'Run Complete!';
         }
@@ -200,9 +200,6 @@ function detectWinState() {
   for (var k = 0; k < centerTags.length; k++) {
     if (centerTags[k].textContent.indexOf('You win! Congratulations!') !== -1) return true;
   }
-
-  var flagleResults = document.querySelectorAll('div[style*="rgb(158, 234, 167)"]');
-  if (flagleResults.length > 0) return true;
 
   return false;
 }
@@ -363,7 +360,7 @@ function handleWin() {
 
 function showAlreadyPlayed() {
   var msg = document.createElement('div');
-  msg.style.cssText = 'position:fixed;top:16px;right:16px;width:220px;background:rgba(15,15,15,0.95);border:1px solid #e94560;border-radius:12px;padding:16px;z-index:999999;font-family:Arial,sans-serif;color:#fff;box-shadow:0 4px 20px rgba(0,0,0,0.5);text-align:center;';
+  msg.style.cssText = 'position:fixed;bottom:16px;right:16px;width:220px;background:rgba(15,15,15,0.95);border:1px solid #e94560;border-radius:12px;padding:16px;z-index:999999;font-family:Arial,sans-serif;color:#fff;box-shadow:0 4px 20px rgba(0,0,0,0.5);text-align:center;';
 
   var logo = document.createElement('div');
   logo.style.cssText = 'color:#e94560;font-size:16px;font-weight:bold;letter-spacing:2px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #333;';
@@ -398,7 +395,7 @@ function showAlreadyPlayedDNF(gameName) {
   var hud = document.getElementById('splitdle-hud');
 
   var msg = document.createElement('div');
-  msg.style.cssText = 'position:fixed;top:16px;right:16px;width:220px;background:rgba(15,15,15,0.95);border:1px solid #e94560;border-radius:12px;padding:16px;z-index:999999;font-family:Arial,sans-serif;color:#fff;box-shadow:0 4px 20px rgba(0,0,0,0.5);text-align:center;';
+  msg.style.cssText = 'position:fixed;bottom:16px;right:16px;width:220px;background:rgba(15,15,15,0.95);border:1px solid #e94560;border-radius:12px;padding:16px;z-index:999999;font-family:Arial,sans-serif;color:#fff;box-shadow:0 4px 20px rgba(0,0,0,0.5);text-align:center;';
 
   var logo = document.createElement('div');
   logo.style.cssText = 'color:#e94560;font-size:16px;font-weight:bold;letter-spacing:2px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #333;';
@@ -417,10 +414,8 @@ function showAlreadyPlayedDNF(gameName) {
   msg.appendChild(countdown);
   document.body.appendChild(msg);
 
-  // Remove the HUD if it was built
   if (hud) hud.remove();
 
-  // Also cancel the run so it resets cleanly
   chrome.runtime.sendMessage({ type: 'STOP_RUN' });
 
   var count = 5;
@@ -463,7 +458,6 @@ chrome.runtime.sendMessage({ type: 'GET_STATE' }, function(response) {
   }
   if (!isCorrectGame) return;
 
-// For Hello Wordl specifically check if already played today
   if (currentHostname === 'hellowordl.net') {
     chrome.runtime.sendMessage({ type: 'CHECK_GAME_PLAYED', gameName: 'Hello Wordl' }, function(response) {
       if (response && response.played) {

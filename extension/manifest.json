@@ -16,8 +16,7 @@
   "host_permissions": [
     "https://hellowordl.net/*",
     "https://costcodle.com/*",
-    "https://framed.wtf/*",
-    "https://www.flagle.io/*"
+    "https://framed.wtf/*"
   ],
   "background": {
     "service_worker": "background.js"
@@ -27,8 +26,7 @@
       "matches": [
         "https://hellowordl.net/*",
         "https://costcodle.com/*",
-        "https://framed.wtf/*",
-        "https://www.flagle.io/*"
+        "https://framed.wtf/*"
       ],
       "js": ["content.js"],
       "css": ["content.css"]

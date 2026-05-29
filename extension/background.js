@@ -2,7 +2,6 @@ var todaysSeed = [
   { name: 'Hello Wordl', url: 'https://hellowordl.net/', category: 'word' },
   { name: 'Costcodle', url: 'https://costcodle.com/', category: 'trivia' },
   { name: 'Framed', url: 'https://framed.wtf/', category: 'film' },
-  { name: 'Flagle', url: 'https://www.flagle.io/', category: 'geography' },
 ];
 
 function getTodayKey() {
@@ -13,7 +12,7 @@ var runState = {
   running: false,
   startTime: null,
   currentGameIndex: 0,
-  splits: [null, null, null, null],
+  splits: [null, null, null],
   completedDate: null,
   startedDate: null
 };
@@ -27,7 +26,7 @@ function validateRunState() {
       runState.running = false;
       runState.startTime = null;
       runState.currentGameIndex = 0;
-      runState.splits = [null, null, null, null];
+      runState.splits = [null, null, null];
     }
   }
 
@@ -81,7 +80,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
       chrome.storage.local.set(store);
     });
 
-    if (runState.currentGameIndex < 3) {
+    if (runState.currentGameIndex < 2) {
       runState.currentGameIndex++;
       chrome.tabs.create({ url: todaysSeed[runState.currentGameIndex].url });
     } else {
@@ -95,7 +94,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
   if (message.type === 'STOP_RUN') {
     runState.running = false;
     runState.startTime = null;
-    runState.splits = [null, null, null, null];
+    runState.splits = [null, null, null];
     runState.currentGameIndex = 0;
     sendResponse({ success: true });
   }
@@ -103,7 +102,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
   if (message.type === 'DNF_RUN') {
     runState.running = false;
     runState.startTime = null;
-    runState.splits = [null, null, null, null];
+    runState.splits = [null, null, null];
     runState.currentGameIndex = 0;
     runState.startedDate = new Date().toLocaleDateString();
     sendResponse({ success: true });
