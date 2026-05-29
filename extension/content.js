@@ -19,7 +19,7 @@ function buildHUD() {
 
   var hud = document.createElement('div');
   hud.id = 'splitdle-hud';
-  hud.style.cssText = 'position:fixed;bottom:16px;right:16px;width:220px;height:auto;max-height:300px;overflow:hidden;background:rgba(15,15,15,0.95);border:1px solid #e94560;border-radius:12px;padding:14px;z-index:999999;font-family:Arial,sans-serif;color:#fff;box-shadow:0 4px 20px rgba(0,0,0,0.5);';
+  hud.style.cssText = 'position:fixed;bottom:16px;right:16px;width:220px;background:rgba(15,15,15,0.95);border:1px solid #e94560;border-radius:12px;padding:14px;z-index:999999;font-family:Arial,sans-serif;color:#fff;box-shadow:0 4px 20px rgba(0,0,0,0.5);';
 
   var logo = document.createElement('div');
   logo.style.cssText = 'color:#e94560;font-size:16px;font-weight:bold;text-align:center;letter-spacing:2px;margin-bottom:4px;padding-bottom:8px;border-bottom:1px solid #333;position:relative;';
