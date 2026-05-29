@@ -204,6 +204,14 @@ function detectWinState() {
   return false;
 }
 
+function detectFailState() {
+  var alerts = document.querySelectorAll('[role="alert"]');
+  for (var i = 0; i < alerts.length; i++) {
+    if (alerts[i].textContent.indexOf('You lost!') !== -1) return true;
+  }
+  return false;
+}
+
 function showPrePlayedDNF() {
   var gameEl = document.getElementById('splitdle-game');
   if (gameEl) {
@@ -269,10 +277,15 @@ function startWinDetection() {
     pageReadyForDetection = true;
   }, 2000);
 
-  var observer = new MutationObserver(function() {
+var observer = new MutationObserver(function() {
     if (!pageReadyForDetection) return;
     if (detectWinState()) {
       handleWin();
+      return;
+    }
+    if (detectFailState()) {
+      handleFail();
+      return;
     }
   });
 
@@ -354,6 +367,61 @@ function handleWin() {
           gameEl.style.color = '#e94560';
         }
       }
+    });
+  });
+}
+
+function handleFail() {
+  if (winHandled) return;
+  winHandled = true;
+
+  var gameEl = document.getElementById('splitdle-game');
+  if (gameEl) {
+    gameEl.textContent = 'Failed - DNF';
+    gameEl.style.color = '#e94560';
+  }
+
+  var stopBtn = document.getElementById('splitdle-stop-btn');
+  if (stopBtn) stopBtn.style.display = 'none';
+
+  var dnfMsg = document.createElement('div');
+  dnfMsg.style.cssText = 'font-size:11px;color:#e94560;text-align:center;margin-bottom:8px;line-height:1.6;padding:8px;background:#1a1a2e;border-radius:8px;';
+  dnfMsg.textContent = 'You failed this game. Your run is a DNF.';
+
+  var hud = document.getElementById('splitdle-hud');
+  var btn = document.getElementById('splitdle-stop-btn');
+  if (hud && btn) hud.insertBefore(dnfMsg, btn);
+
+  chrome.runtime.sendMessage({ type: 'DNF_RUN' }, function() {
+    chrome.runtime.sendMessage({ type: 'GET_STATE' }, function(finalState) {
+      var seed = finalState ? finalState.seed : [];
+      var currentIndex = finalState ? finalState.state.currentGameIndex : 0;
+      var gameName = seed[currentIndex] ? seed[currentIndex].name : 'Unknown';
+      var date = new Date().toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
+      var params = 'dnf=true&game=' + encodeURIComponent(gameName) + '&date=' + encodeURIComponent(date);
+
+      var countdown = 5;
+      var countEl = document.createElement('p');
+      countEl.style.cssText = 'font-size:11px;color:#aaaaaa;text-align:center;margin-top:8px;';
+      countEl.textContent = 'Closing in ' + countdown + '...';
+      var hudEl = document.getElementById('splitdle-hud');
+      if (hudEl) hudEl.appendChild(countEl);
+
+      var interval = setInterval(function() {
+        countdown--;
+        if (countdown > 0) {
+          countEl.textContent = 'Closing in ' + countdown + '...';
+        } else {
+          clearInterval(interval);
+          var hudEl2 = document.getElementById('splitdle-hud');
+          if (hudEl2) hudEl2.remove();
+          window.location.href = 'https://splitdle.com/results.html?' + params;
+        }
+      }, 1000);
     });
   });
 }

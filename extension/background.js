@@ -1,7 +1,7 @@
 var todaysSeed = [
   { name: 'Hello Wordl', url: 'https://hellowordl.net/', category: 'word' },
   { name: 'Costcodle', url: 'https://costcodle.com/', category: 'trivia' },
-  { name: 'Framed', url: 'https://framed.wtf/', category: 'film' },
+  { name: 'Framed', url: 'https://framed.wtf/', category: 'film' }
 ];
 
 function getTodayKey() {
@@ -19,7 +19,6 @@ var runState = {
 
 function validateRunState() {
   var todayDate = new Date().toLocaleDateString();
-
   if (runState.running && runState.startTime) {
     var elapsed = Date.now() - runState.startTime;
     if (elapsed > 7200000) {
@@ -29,11 +28,9 @@ function validateRunState() {
       runState.splits = [null, null, null];
     }
   }
-
   if (runState.completedDate && runState.completedDate !== todayDate) {
     runState.completedDate = null;
   }
-
   if (runState.startedDate && runState.startedDate !== todayDate) {
     runState.startedDate = null;
   }
@@ -46,7 +43,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     runState.running = true;
     runState.startTime = Date.now();
     runState.currentGameIndex = 0;
-    runState.splits = [null, null, null, null];
+    runState.splits = [null, null, null];
     runState.startedDate = new Date().toLocaleDateString();
     chrome.tabs.create({ url: todaysSeed[0].url });
     sendResponse({ success: true });
@@ -67,7 +64,6 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     var elapsed = Date.now() - runState.startTime;
     runState.splits[runState.currentGameIndex] = elapsed;
 
-    // Record this game as completed today
     var completedGameName = todaysSeed[runState.currentGameIndex].name;
     var todayKey = getTodayKey();
     chrome.storage.local.get(todayKey, function(result) {
@@ -108,7 +104,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     sendResponse({ success: true });
   }
 
-if (message.type === 'CHECK_GAME_PLAYED') {
+  if (message.type === 'CHECK_GAME_PLAYED') {
     var todayKey = getTodayKey();
     chrome.storage.local.get(todayKey, function(result) {
       var played = result[todayKey] || [];
