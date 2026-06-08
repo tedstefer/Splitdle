@@ -426,74 +426,49 @@ function handleFail() {
   });
 }
 
-function showAlreadyPlayed() {
-  var msg = document.createElement('div');
-  msg.style.cssText = 'position:fixed;bottom:16px;right:16px;width:220px;background:rgba(15,15,15,0.95);border:1px solid #e94560;border-radius:12px;padding:16px;z-index:999999;font-family:Arial,sans-serif;color:#fff;box-shadow:0 4px 20px rgba(0,0,0,0.5);text-align:center;';
-
-  var logo = document.createElement('div');
-  logo.style.cssText = 'color:#e94560;font-size:16px;font-weight:bold;letter-spacing:2px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #333;';
-  logo.textContent = 'Splitdle';
-
-  var text = document.createElement('p');
-  text.style.cssText = 'font-size:12px;color:#ffffff;margin-bottom:8px;line-height:1.6;';
-  text.textContent = 'You have already played Splitdle today.';
-
-  var countdown = document.createElement('p');
-  countdown.style.cssText = 'font-size:11px;color:#aaaaaa;';
-  countdown.textContent = 'Closing in 3...';
-
-  msg.appendChild(logo);
-  msg.appendChild(text);
-  msg.appendChild(countdown);
-  document.body.appendChild(msg);
-
-  var count = 3;
-  var interval = setInterval(function() {
-    count--;
-    if (count > 0) {
-      countdown.textContent = 'Closing in ' + count + '...';
-    } else {
-      clearInterval(interval);
-      if (msg) msg.remove();
-    }
-  }, 1000);
-}
-
-function showAlreadyPlayedDNF(gameName) {
+function showAlreadyPlayed(gameName, redirectHome) {
   var hud = document.getElementById('splitdle-hud');
-
-  var msg = document.createElement('div');
-  msg.style.cssText = 'position:fixed;bottom:16px;right:16px;width:220px;background:rgba(15,15,15,0.95);border:1px solid #e94560;border-radius:12px;padding:16px;z-index:999999;font-family:Arial,sans-serif;color:#fff;box-shadow:0 4px 20px rgba(0,0,0,0.5);text-align:center;';
-
-  var logo = document.createElement('div');
-  logo.style.cssText = 'color:#e94560;font-size:16px;font-weight:bold;letter-spacing:2px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #333;';
-  logo.textContent = 'Splitdle';
-
-  var text = document.createElement('p');
-  text.style.cssText = 'font-size:12px;color:#ffffff;margin-bottom:8px;line-height:1.6;';
-  text.textContent = 'You have already played ' + gameName + ' today. Please return to Splitdle to continue.';
-
-  var countdown = document.createElement('p');
-  countdown.style.cssText = 'font-size:11px;color:#aaaaaa;';
-  countdown.textContent = 'Returning home in 5...';
-
-  msg.appendChild(logo);
-  msg.appendChild(text);
-  msg.appendChild(countdown);
-  document.body.appendChild(msg);
-
   if (hud) hud.remove();
 
-  chrome.runtime.sendMessage({ type: 'STOP_RUN' });
+  var msg = document.createElement('div');
+  msg.setAttribute('style', 'position:fixed !important;bottom:16px !important;right:16px !important;width:220px !important;height:fit-content !important;top:auto !important;background:rgba(15,15,15,0.95) !important;border:1px solid #e94560 !important;border-radius:12px !important;padding:16px !important;z-index:2147483647 !important;font-family:Arial,sans-serif !important;color:#fff !important;box-shadow:0 4px 20px rgba(0,0,0,0.5) !important;text-align:center !important;');
 
-  var count = 5;
+  var logo = document.createElement('div');
+  logo.style.cssText = 'color:#e94560;font-size:16px;font-weight:bold;letter-spacing:2px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #333;';
+  logo.textContent = 'Splitdle';
+
+  var text = document.createElement('p');
+  text.style.cssText = 'font-size:12px;color:#ffffff;margin-bottom:8px;line-height:1.6;';
+  text.textContent = gameName
+    ? 'You have already played ' + gameName + ' today. Please return to Splitdle to continue.'
+    : 'You have already played Splitdle today.';
+
+  var countdownEl = document.createElement('p');
+  countdownEl.style.cssText = 'font-size:11px;color:#aaaaaa;';
+  var maxCount = redirectHome ? 5 : 3;
+  countdownEl.textContent = (redirectHome ? 'Returning home in ' : 'Closing in ') + maxCount + '...';
+
+  msg.appendChild(logo);
+  msg.appendChild(text);
+  msg.appendChild(countdownEl);
+  document.body.appendChild(msg);
+
+  if (redirectHome) {
+    chrome.runtime.sendMessage({ type: 'STOP_RUN' });
+  }
+
+  var count = maxCount;
   var interval = setInterval(function() {
     count--;
     if (count > 0) {
-      countdown.textContent = 'Returning home in ' + count + '...';
+      countdownEl.textContent = (redirectHome ? 'Returning home in ' : 'Closing in ') + count + '...';
     } else {
       clearInterval(interval);
-      window.location.href = 'https://splitdle.com';
+      if (redirectHome) {
+        window.location.href = 'https://splitdle.com';
+      } else {
+        if (msg) msg.remove();
+      }
     }
   }, 1000);
 }
@@ -505,7 +480,7 @@ chrome.runtime.sendMessage({ type: 'GET_STATE' }, function(response) {
 
   var todayDate = new Date().toLocaleDateString();
   if (state.completedDate === todayDate) {
-    showAlreadyPlayed();
+    showAlreadyPlayed(null, false);
     return;
   }
 
@@ -530,7 +505,7 @@ chrome.runtime.sendMessage({ type: 'GET_STATE' }, function(response) {
     chrome.runtime.sendMessage({ type: 'CHECK_GAME_PLAYED', gameName: 'Hello Wordl' }, function(response) {
       if (response && response.played) {
         buildHUD();
-        showAlreadyPlayedDNF('Hello Wordl');
+        showAlreadyPlayedDNF('Hello Wordl', true);
       } else {
         buildHUD();
         startWinDetection();
