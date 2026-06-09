@@ -13,7 +13,7 @@ var runState = {
   running: false,
   startTime: null,
   currentGameIndex: 0,
-  splits: [null, null, null],
+  splits: [null, null, null, null],
   completedDate: null,
   startedDate: null
 };
@@ -26,7 +26,7 @@ function validateRunState() {
       runState.running = false;
       runState.startTime = null;
       runState.currentGameIndex = 0;
-      runState.splits = [null, null, null];
+      runState.splits = [null, null, null, null];
     }
   }
   if (runState.completedDate && runState.completedDate !== todayDate) {
@@ -44,7 +44,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     runState.running = true;
     runState.startTime = Date.now();
     runState.currentGameIndex = 0;
-    runState.splits = [null, null, null];
+    runState.splits = [null, null, null, null];
     runState.startedDate = new Date().toLocaleDateString();
     chrome.tabs.create({ url: todaysSeed[0].url });
     sendResponse({ success: true });
@@ -77,7 +77,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
       chrome.storage.local.set(store);
     });
 
-    if (runState.currentGameIndex < 2) {
+    if (runState.currentGameIndex < 3) {
       runState.currentGameIndex++;
       chrome.tabs.create({ url: todaysSeed[runState.currentGameIndex].url });
     } else {
@@ -91,7 +91,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
   if (message.type === 'STOP_RUN') {
     runState.running = false;
     runState.startTime = null;
-    runState.splits = [null, null, null];
+    runState.splits = [null, null, null, null];
     runState.currentGameIndex = 0;
     sendResponse({ success: true });
   }
@@ -99,7 +99,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
   if (message.type === 'DNF_RUN') {
     runState.running = false;
     runState.startTime = null;
-    runState.splits = [null, null, null];
+    runState.splits = [null, null, null, null];
     runState.currentGameIndex = 0;
     runState.startedDate = new Date().toLocaleDateString();
     sendResponse({ success: true });
