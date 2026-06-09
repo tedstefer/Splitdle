@@ -101,7 +101,7 @@ function buildHUD() {
   document.body.appendChild(hud);
 
   chrome.runtime.sendMessage({ type: 'GET_STATE' }, function(response) {
-    var games = ['Game 1', 'Game 2', 'Game 3'];
+    var games = ['Game 1', 'Game 2', 'Game 3', 'Game 4'];
     if (response && response.seed) {
       games = response.seed.map(function(g) { return g.name; });
     }
@@ -136,7 +136,6 @@ function buildHUD() {
         year: 'numeric'
       });
       var params = 'dnf=true&game=' + encodeURIComponent(currentGame) + '&date=' + encodeURIComponent(date);
-
       chrome.runtime.sendMessage({ type: 'STOP_RUN' }, function() {
         var hudEl = document.getElementById('splitdle-hud');
         if (hudEl) hudEl.remove();
@@ -163,7 +162,7 @@ function buildHUD() {
       var gameEl = document.getElementById('splitdle-game');
       if (gameEl) {
         if (state.running && seed && seed[state.currentGameIndex]) {
-          gameEl.textContent = 'Game ' + (state.currentGameIndex + 1) + ' of 3 - ' + seed[state.currentGameIndex].name;
+          gameEl.textContent = 'Game ' + (state.currentGameIndex + 1) + ' of 4 - ' + seed[state.currentGameIndex].name;
         } else if (!state.running) {
           gameEl.textContent = 'Run Complete!';
         }
@@ -186,60 +185,57 @@ var winHandled = false;
 var pageReadyForDetection = false;
 
 function detectWinState() {
+  // Hello Wordl
   var alerts = document.querySelectorAll('[role="alert"]');
   for (var i = 0; i < alerts.length; i++) {
     if (alerts[i].textContent.indexOf('You won!') !== -1) return true;
   }
 
+  // Framed
   var paragraphs = document.querySelectorAll('p.font-semibold');
   for (var j = 0; j < paragraphs.length; j++) {
     if (paragraphs[j].textContent.indexOf('You got it!') !== -1) return true;
   }
 
+  // Costcodle
   var centerTags = document.querySelectorAll('center');
   for (var k = 0; k < centerTags.length; k++) {
     if (centerTags[k].textContent.indexOf('You win! Congratulations!') !== -1) return true;
   }
 
+  // Guess the Angle
+  var winMsg = document.querySelector('h2.win-msg');
+  if (winMsg && winMsg.textContent.indexOf('Good Job!') !== -1) return true;
+
   return false;
 }
 
 function detectFailState() {
+  // Hello Wordl
   var alerts = document.querySelectorAll('[role="alert"]');
   for (var i = 0; i < alerts.length; i++) {
     if (alerts[i].textContent.indexOf('You lost!') !== -1) return true;
   }
+
+  // Guess the Angle
+  var loseMsg = document.querySelector('h2.lose-msg');
+  if (loseMsg && loseMsg.textContent.indexOf('Better luck next time') !== -1) return true;
+
   return false;
 }
 
-function showPrePlayedDNF() {
-  var gameEl = document.getElementById('splitdle-game');
-  if (gameEl) {
-    gameEl.textContent = 'Already played today - DNF';
-    gameEl.style.color = '#e94560';
-  }
-
-  var stopBtn = document.getElementById('splitdle-stop-btn');
-  if (stopBtn) stopBtn.style.display = 'none';
-
-  var dnfMsg = document.createElement('div');
-  dnfMsg.style.cssText = 'font-size:11px;color:#e94560;text-align:center;margin-bottom:8px;line-height:1.6;padding:8px;background:#1a1a2e;border-radius:8px;';
-  dnfMsg.textContent = 'You have already played this game today, resulting in a DNF.';
-
-  var hud = document.getElementById('splitdle-hud');
-  if (hud && stopBtn) hud.insertBefore(dnfMsg, stopBtn);
-
+function buildDNFMessage(gameName, callback) {
   chrome.runtime.sendMessage({ type: 'DNF_RUN' }, function() {
     chrome.runtime.sendMessage({ type: 'GET_STATE' }, function(finalState) {
       var seed = finalState ? finalState.seed : [];
       var currentIndex = finalState ? finalState.state.currentGameIndex : 0;
-      var gameName = seed[currentIndex] ? seed[currentIndex].name : 'Unknown';
+      var name = gameName || (seed[currentIndex] ? seed[currentIndex].name : 'Unknown');
       var date = new Date().toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',
         year: 'numeric'
       });
-      var params = 'dnf=true&game=' + encodeURIComponent(gameName) + '&date=' + encodeURIComponent(date);
+      var params = 'dnf=true&game=' + encodeURIComponent(name) + '&date=' + encodeURIComponent(date);
 
       var countdown = 5;
       var countEl = document.createElement('p');
@@ -263,6 +259,26 @@ function showPrePlayedDNF() {
   });
 }
 
+function showPrePlayedDNF() {
+  var gameEl = document.getElementById('splitdle-game');
+  if (gameEl) {
+    gameEl.textContent = 'Already played today - DNF';
+    gameEl.style.color = '#e94560';
+  }
+
+  var stopBtn = document.getElementById('splitdle-stop-btn');
+  if (stopBtn) stopBtn.style.display = 'none';
+
+  var dnfMsg = document.createElement('div');
+  dnfMsg.style.cssText = 'font-size:11px;color:#e94560;text-align:center;margin-bottom:8px;line-height:1.6;padding:8px;background:#1a1a2e;border-radius:8px;';
+  dnfMsg.textContent = 'You have already played this game today, resulting in a DNF.';
+
+  var hud = document.getElementById('splitdle-hud');
+  if (hud && stopBtn) hud.insertBefore(dnfMsg, stopBtn);
+
+  buildDNFMessage(null);
+}
+
 function startWinDetection() {
   var prePlayedCheckDone = false;
 
@@ -277,7 +293,7 @@ function startWinDetection() {
     pageReadyForDetection = true;
   }, 2000);
 
-var observer = new MutationObserver(function() {
+  var observer = new MutationObserver(function() {
     if (!pageReadyForDetection) return;
     if (detectWinState()) {
       handleWin();
@@ -320,12 +336,12 @@ function handleWin() {
           var countdown = 3;
           stopBtn.style.background = '#1a1a2e';
           stopBtn.style.color = '#ffffff';
-          stopBtn.textContent = 'Bringing you to leaderboard in: ' + countdown;
+          stopBtn.textContent = 'Bringing you to results in: ' + countdown;
 
           var countInterval = setInterval(function() {
             countdown--;
             if (countdown > 0) {
-              stopBtn.textContent = 'Bringing you to leaderboard in: ' + countdown;
+              stopBtn.textContent = 'Bringing you to results in: ' + countdown;
             } else {
               clearInterval(countInterval);
               var hudEl = document.getElementById('splitdle-hud');
@@ -392,38 +408,7 @@ function handleFail() {
   var btn = document.getElementById('splitdle-stop-btn');
   if (hud && btn) hud.insertBefore(dnfMsg, btn);
 
-  chrome.runtime.sendMessage({ type: 'DNF_RUN' }, function() {
-    chrome.runtime.sendMessage({ type: 'GET_STATE' }, function(finalState) {
-      var seed = finalState ? finalState.seed : [];
-      var currentIndex = finalState ? finalState.state.currentGameIndex : 0;
-      var gameName = seed[currentIndex] ? seed[currentIndex].name : 'Unknown';
-      var date = new Date().toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric'
-      });
-      var params = 'dnf=true&game=' + encodeURIComponent(gameName) + '&date=' + encodeURIComponent(date);
-
-      var countdown = 5;
-      var countEl = document.createElement('p');
-      countEl.style.cssText = 'font-size:11px;color:#aaaaaa;text-align:center;margin-top:8px;';
-      countEl.textContent = 'Closing in ' + countdown + '...';
-      var hudEl = document.getElementById('splitdle-hud');
-      if (hudEl) hudEl.appendChild(countEl);
-
-      var interval = setInterval(function() {
-        countdown--;
-        if (countdown > 0) {
-          countEl.textContent = 'Closing in ' + countdown + '...';
-        } else {
-          clearInterval(interval);
-          var hudEl2 = document.getElementById('splitdle-hud');
-          if (hudEl2) hudEl2.remove();
-          window.location.href = 'https://splitdle.com/results.html?' + params;
-        }
-      }, 1000);
-    });
-  });
+  buildDNFMessage(null);
 }
 
 function showAlreadyPlayed(gameName, redirectHome) {
@@ -505,7 +490,7 @@ chrome.runtime.sendMessage({ type: 'GET_STATE' }, function(response) {
     chrome.runtime.sendMessage({ type: 'CHECK_GAME_PLAYED', gameName: 'Hello Wordl' }, function(response) {
       if (response && response.played) {
         buildHUD();
-        showAlreadyPlayedDNF('Hello Wordl', true);
+        showAlreadyPlayed('Hello Wordl', true);
       } else {
         buildHUD();
         startWinDetection();

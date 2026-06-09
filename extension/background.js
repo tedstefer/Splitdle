@@ -1,5 +1,6 @@
 var todaysSeed = [
   { name: 'Hello Wordl', url: 'https://hellowordl.net/', category: 'word' },
+  { name: 'Guess the Angle', url: 'https://guesstheangle.wtf/', category: 'trivia' },
   { name: 'Costcodle', url: 'https://costcodle.com/', category: 'trivia' },
   { name: 'Framed', url: 'https://framed.wtf/', category: 'film' }
 ];
