@@ -29,7 +29,7 @@ function buildHUD() {
   fontLink.href = 'https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap';
   document.head.appendChild(fontLink);
 
-  logo.textContent = 'Splitdle';
+  logo.textContent = 'SPL:IT:DLE';
 
   var closeX = document.createElement('span');
   closeX.textContent = '✕';
@@ -435,8 +435,14 @@ function showAlreadyPlayed(gameName, redirectHome) {
   msg.setAttribute('style', 'position:fixed !important;bottom:16px !important;right:16px !important;width:220px !important;height:fit-content !important;top:auto !important;background:rgba(15,15,15,0.95) !important;border:1px solid #e94560 !important;border-radius:12px !important;padding:16px !important;z-index:2147483647 !important;font-family:Arial,sans-serif !important;color:#fff !important;box-shadow:0 4px 20px rgba(0,0,0,0.5) !important;text-align:center !important;');
 
   var logo = document.createElement('div');
-  logo.style.cssText = 'color:#e94560;font-size:16px;font-weight:bold;letter-spacing:2px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #333;';
-  logo.textContent = 'Splitdle';
+  logo.style.cssText = 'color:#e94560;font-size:14px;font-family:Orbitron,sans-serif;font-weight:900;text-align:center;letter-spacing:2px;margin-bottom:4px;padding-bottom:8px;border-bottom:1px solid #333;position:relative;';
+
+  var fontLink = document.createElement('link');
+  fontLink.rel = 'stylesheet';
+  fontLink.href = 'https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap';
+  document.head.appendChild(fontLink);
+
+  logo.textContent = 'SPL:IT:DLE';
 
   var text = document.createElement('p');
   text.style.cssText = 'font-size:12px;color:#ffffff;margin-bottom:8px;line-height:1.6;';
