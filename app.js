@@ -6,14 +6,19 @@ const closeBtn = document.getElementById('closeBtn');
 
 // When Start Daily Run is clicked
 startBtn.addEventListener('click', function() {
-  const extensionInstalled = false;
+  // Try to detect if extension is installed
+  // For now direct users to install instructions
+  var isChrome = navigator.userAgent.indexOf('Chrome') !== -1;
+  var isFirefox = navigator.userAgent.indexOf('Firefox') !== -1;
 
-  if (extensionInstalled) {
-    console.log('Extension found — starting run');
-  } else {
-    // Show the modal instead of an alert
-    modal.style.display = 'flex';
+  if (!isChrome && !isFirefox) {
+    alert('Splitdle requires Chrome browser extension to play.');
+    return;
   }
+
+  // Once published this will link to Chrome Web Store
+  // For now show install instructions modal
+  modal.style.display = 'flex';
 });
 
 // When Install Extension is clicked
