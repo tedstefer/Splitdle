@@ -221,6 +221,16 @@ function detectFailState() {
   var loseMsg = document.querySelector('h2.lose-msg');
   if (loseMsg && loseMsg.textContent.indexOf('Better luck next time') !== -1) return true;
 
+  // Costcodle
+  var centerTags = document.querySelectorAll('center');
+  for (var k = 0; k < centerTags.length; k++) {
+    if (centerTags[k].textContent.indexOf('Better luck next time!') !== -1) return true;
+  }
+
+  // Framed - 6 red squares indicates all guesses used and failed
+  var redSquares = document.querySelectorAll('div.bg-red-700.rounded-sm');
+  if (redSquares.length === 6) return true;
+
   return false;
 }
 
