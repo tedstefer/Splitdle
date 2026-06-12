@@ -22,7 +22,13 @@ function buildHUD() {
   hud.setAttribute('style', 'position:fixed !important;bottom:16px !important;right:16px !important;width:220px !important;height:fit-content !important;max-height:fit-content !important;min-height:0 !important;top:auto !important;left:auto !important;background:rgba(15,15,15,0.95) !important;border:1px solid #e94560 !important;border-radius:12px !important;padding:14px !important;z-index:2147483647 !important;font-family:Arial,sans-serif !important;color:#fff !important;box-shadow:0 4px 20px rgba(0,0,0,0.5) !important;display:inline-block !important;vertical-align:top !important;');
 
   var logo = document.createElement('div');
-  logo.style.cssText = 'color:#e94560;font-size:16px;font-weight:bold;text-align:center;letter-spacing:2px;margin-bottom:4px;padding-bottom:8px;border-bottom:1px solid #333;position:relative;';
+  logo.style.cssText = 'color:#e94560;font-size:14px;font-family:Orbitron,sans-serif;font-weight:900;text-align:center;letter-spacing:2px;margin-bottom:4px;padding-bottom:8px;border-bottom:1px solid #333;position:relative;';
+
+  var fontLink = document.createElement('link');
+  fontLink.rel = 'stylesheet';
+  fontLink.href = 'https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap';
+  document.head.appendChild(fontLink);
+
   logo.textContent = 'Splitdle';
 
   var closeX = document.createElement('span');
