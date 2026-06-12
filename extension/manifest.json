@@ -3,9 +3,19 @@
   "name": "Splitdle",
   "version": "1.0",
   "description": "Race through daily -dle games. Lock your splits. Beat your friends.",
+  "icons": {
+    "16": "S Logo 16.png",
+    "48": "S Logo 48.png",
+    "128": "S Logo 128.png"
+  },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Splitdle"
+    "default_title": "Splitdle",
+    "default_icon": {
+      "16": "S Logo 16.png",
+      "48": "S Logo 48.png",
+      "128": "S Logo 128.png"
+    }
   },
   "permissions": [
     "storage",
