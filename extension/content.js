@@ -29,7 +29,7 @@ function buildHUD() {
   fontLink.href = 'https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap';
   document.head.appendChild(fontLink);
 
-  logo.textContent = 'SPL:IT:DLE';
+  logo.textContent = 'Splitdle';
 
   var closeX = document.createElement('span');
   closeX.textContent = '✕';
@@ -191,25 +191,21 @@ var winHandled = false;
 var pageReadyForDetection = false;
 
 function detectWinState() {
-  // Hello Wordl
   var alerts = document.querySelectorAll('[role="alert"]');
   for (var i = 0; i < alerts.length; i++) {
     if (alerts[i].textContent.indexOf('You won!') !== -1) return true;
   }
 
-  // Framed
   var paragraphs = document.querySelectorAll('p.font-semibold');
   for (var j = 0; j < paragraphs.length; j++) {
     if (paragraphs[j].textContent.indexOf('You got it!') !== -1) return true;
   }
 
-  // Costcodle
   var centerTags = document.querySelectorAll('center');
   for (var k = 0; k < centerTags.length; k++) {
     if (centerTags[k].textContent.indexOf('You win! Congratulations!') !== -1) return true;
   }
 
-  // Guess the Angle
   var winMsg = document.querySelector('h2.win-msg');
   if (winMsg && winMsg.textContent.indexOf('Good Job!') !== -1) return true;
 
@@ -217,82 +213,80 @@ function detectWinState() {
 }
 
 function detectFailState() {
-  // Hello Wordl
   var alerts = document.querySelectorAll('[role="alert"]');
   for (var i = 0; i < alerts.length; i++) {
     if (alerts[i].textContent.indexOf('You lost!') !== -1) return true;
   }
 
-  // Guess the Angle
   var loseMsg = document.querySelector('h2.lose-msg');
   if (loseMsg && loseMsg.textContent.indexOf('Better luck next time') !== -1) return true;
 
-  // Costcodle
   var centerTags = document.querySelectorAll('center');
   for (var k = 0; k < centerTags.length; k++) {
     if (centerTags[k].textContent.indexOf('Better luck next time!') !== -1) return true;
   }
 
-  // Framed - 6 red squares indicates all guesses used and failed
   var redSquares = document.querySelectorAll('div.bg-red-700.rounded-sm');
   if (redSquares.length === 6) return true;
 
   return false;
 }
 
-function buildDNFMessage(gameName, callback) {
-  chrome.runtime.sendMessage({ type: 'DNF_RUN' }, function() {
-    chrome.runtime.sendMessage({ type: 'GET_STATE' }, function(finalState) {
-      var seed = finalState ? finalState.seed : [];
-      var currentIndex = finalState ? finalState.state.currentGameIndex : 0;
-      var name = gameName || (seed[currentIndex] ? seed[currentIndex].name : 'Unknown');
-      var date = new Date().toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric'
-      });
-      var params = 'dnf=true&game=' + encodeURIComponent(name) + '&date=' + encodeURIComponent(date);
-
-      var countdown = 5;
-      var countEl = document.createElement('p');
-      countEl.style.cssText = 'font-size:11px;color:#aaaaaa;text-align:center;margin-top:8px;';
-      countEl.textContent = 'Closing in ' + countdown + '...';
-      var hudEl = document.getElementById('splitdle-hud');
-      if (hudEl) hudEl.appendChild(countEl);
-
-      var interval = setInterval(function() {
-        countdown--;
-        if (countdown > 0) {
-          countEl.textContent = 'Closing in ' + countdown + '...';
-        } else {
-          clearInterval(interval);
-          var hudEl2 = document.getElementById('splitdle-hud');
-          if (hudEl2) hudEl2.remove();
-          window.location.href = 'https://splitdle.com/results.html?' + params;
-        }
-      }, 1000);
-    });
+function redirectToDNF(gameName) {
+  var date = new Date().toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
   });
+  var params = 'dnf=true&game=' + encodeURIComponent(gameName) + '&date=' + encodeURIComponent(date);
+
+  var countdown = 5;
+  var countEl = document.createElement('p');
+  countEl.style.cssText = 'font-size:11px;color:#aaaaaa;text-align:center;margin-top:8px;';
+  countEl.textContent = 'Closing in ' + countdown + '...';
+  var hudEl = document.getElementById('splitdle-hud');
+  if (hudEl) hudEl.appendChild(countEl);
+
+  var interval = setInterval(function() {
+    countdown--;
+    if (countdown > 0) {
+      countEl.textContent = 'Closing in ' + countdown + '...';
+    } else {
+      clearInterval(interval);
+      var hudEl2 = document.getElementById('splitdle-hud');
+      if (hudEl2) hudEl2.remove();
+      window.location.href = 'https://splitdle.com/results.html?' + params;
+    }
+  }, 1000);
 }
 
 function showPrePlayedDNF() {
-  var gameEl = document.getElementById('splitdle-game');
-  if (gameEl) {
-    gameEl.textContent = 'Already played today - DNF';
-    gameEl.style.color = '#e94560';
-  }
+  // Capture game name BEFORE resetting state
+  chrome.runtime.sendMessage({ type: 'GET_STATE' }, function(currentState) {
+    var seed = currentState ? currentState.seed : [];
+    var currentIndex = currentState ? currentState.state.currentGameIndex : 0;
+    var gameName = seed[currentIndex] ? seed[currentIndex].name : 'Unknown';
 
-  var stopBtn = document.getElementById('splitdle-stop-btn');
-  if (stopBtn) stopBtn.style.display = 'none';
+    var gameEl = document.getElementById('splitdle-game');
+    if (gameEl) {
+      gameEl.textContent = 'Already played today - DNF';
+      gameEl.style.color = '#e94560';
+    }
 
-  var dnfMsg = document.createElement('div');
-  dnfMsg.style.cssText = 'font-size:11px;color:#e94560;text-align:center;margin-bottom:8px;line-height:1.6;padding:8px;background:#1a1a2e;border-radius:8px;';
-  dnfMsg.textContent = 'You have already played this game today, resulting in a DNF.';
+    var stopBtn = document.getElementById('splitdle-stop-btn');
+    if (stopBtn) stopBtn.style.display = 'none';
 
-  var hud = document.getElementById('splitdle-hud');
-  if (hud && stopBtn) hud.insertBefore(dnfMsg, stopBtn);
+    var dnfMsg = document.createElement('div');
+    dnfMsg.style.cssText = 'font-size:11px;color:#e94560;text-align:center;margin-bottom:8px;line-height:1.6;padding:8px;background:#1a1a2e;border-radius:8px;';
+    dnfMsg.textContent = 'You have already played this game today, resulting in a DNF.';
 
-  buildDNFMessage(null);
+    var hud = document.getElementById('splitdle-hud');
+    if (hud && stopBtn) hud.insertBefore(dnfMsg, stopBtn);
+
+    chrome.runtime.sendMessage({ type: 'DNF_RUN' }, function() {
+      redirectToDNF(gameName);
+    });
+  });
 }
 
 function startWinDetection() {
@@ -407,24 +401,33 @@ function handleFail() {
   if (winHandled) return;
   winHandled = true;
 
-  var gameEl = document.getElementById('splitdle-game');
-  if (gameEl) {
-    gameEl.textContent = 'Failed - DNF';
-    gameEl.style.color = '#e94560';
-  }
+  // Capture game name BEFORE resetting state
+  chrome.runtime.sendMessage({ type: 'GET_STATE' }, function(currentState) {
+    var seed = currentState ? currentState.seed : [];
+    var currentIndex = currentState ? currentState.state.currentGameIndex : 0;
+    var gameName = seed[currentIndex] ? seed[currentIndex].name : 'Unknown';
 
-  var stopBtn = document.getElementById('splitdle-stop-btn');
-  if (stopBtn) stopBtn.style.display = 'none';
+    var gameEl = document.getElementById('splitdle-game');
+    if (gameEl) {
+      gameEl.textContent = 'Failed - DNF';
+      gameEl.style.color = '#e94560';
+    }
 
-  var dnfMsg = document.createElement('div');
-  dnfMsg.style.cssText = 'font-size:11px;color:#e94560;text-align:center;margin-bottom:8px;line-height:1.6;padding:8px;background:#1a1a2e;border-radius:8px;';
-  dnfMsg.textContent = 'You failed this game. Your run is a DNF.';
+    var stopBtn = document.getElementById('splitdle-stop-btn');
+    if (stopBtn) stopBtn.style.display = 'none';
 
-  var hud = document.getElementById('splitdle-hud');
-  var btn = document.getElementById('splitdle-stop-btn');
-  if (hud && btn) hud.insertBefore(dnfMsg, btn);
+    var dnfMsg = document.createElement('div');
+    dnfMsg.style.cssText = 'font-size:11px;color:#e94560;text-align:center;margin-bottom:8px;line-height:1.6;padding:8px;background:#1a1a2e;border-radius:8px;';
+    dnfMsg.textContent = 'You failed this game. Your run is a DNF.';
 
-  buildDNFMessage(null);
+    var hud = document.getElementById('splitdle-hud');
+    var btn = document.getElementById('splitdle-stop-btn');
+    if (hud && btn) hud.insertBefore(dnfMsg, btn);
+
+    chrome.runtime.sendMessage({ type: 'DNF_RUN' }, function() {
+      redirectToDNF(gameName);
+    });
+  });
 }
 
 function showAlreadyPlayed(gameName, redirectHome) {
@@ -435,14 +438,8 @@ function showAlreadyPlayed(gameName, redirectHome) {
   msg.setAttribute('style', 'position:fixed !important;bottom:16px !important;right:16px !important;width:220px !important;height:fit-content !important;top:auto !important;background:rgba(15,15,15,0.95) !important;border:1px solid #e94560 !important;border-radius:12px !important;padding:16px !important;z-index:2147483647 !important;font-family:Arial,sans-serif !important;color:#fff !important;box-shadow:0 4px 20px rgba(0,0,0,0.5) !important;text-align:center !important;');
 
   var logo = document.createElement('div');
-  logo.style.cssText = 'color:#e94560;font-size:14px;font-family:Orbitron,sans-serif;font-weight:900;text-align:center;letter-spacing:2px;margin-bottom:4px;padding-bottom:8px;border-bottom:1px solid #333;position:relative;';
-
-  var fontLink = document.createElement('link');
-  fontLink.rel = 'stylesheet';
-  fontLink.href = 'https://fonts.googleapis.com/css2?family=Orbitron:wght@900&display=swap';
-  document.head.appendChild(fontLink);
-
-  logo.textContent = 'SPL:IT:DLE';
+  logo.style.cssText = 'color:#e94560;font-size:16px;font-weight:bold;letter-spacing:2px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #333;';
+  logo.textContent = 'Splitdle';
 
   var text = document.createElement('p');
   text.style.cssText = 'font-size:12px;color:#ffffff;margin-bottom:8px;line-height:1.6;';
