@@ -63,7 +63,12 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
 
   if (message.type === 'GAME_WON') {
     var elapsed = Date.now() - runState.startTime;
-    runState.splits[runState.currentGameIndex] = elapsed;
+    var previousCumulative = 0;
+    for (var p = 0; p < runState.currentGameIndex; p++) {
+      previousCumulative += runState.splits[p];
+    }
+    var individualTime = elapsed - previousCumulative;
+    runState.splits[runState.currentGameIndex] = individualTime;
 
     var completedGameName = todaysSeed[runState.currentGameIndex].name;
     var todayKey = getTodayKey();
